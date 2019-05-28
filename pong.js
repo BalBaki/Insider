@@ -66,32 +66,68 @@
             position: 'absolute',
             fontSize: '50px',
             textAlign: 'center',
+        },
+        menu:{
+            width: 'auto',
+            height: 50,
+            position: 'absolute',
+            top: '40%',
+            left: '33%',
+            background: 'black',
+        },
+
+        button:{
+            height:50,
+            width: 'auto',
+            fontSize : 30
         }
     };
 
     var CONSTS = {
-        gameSpeed: 40,
+        gameSpeed: 10,
         score1: 0,
         score2: 0,
         stick1Speed: 0,
         stick2Speed: 0,
         ballTopSpeed: 0,
         ballLeftSpeed: 0,
-        ballCount: 8
+        ballCount: 8,
+        mode : ''
     };
 
     function start() {
         draw();
-        document.getElementById('pong-game').focus();
         setEvents();
-        roll();
-        loop();
+    
+       
     }
 
     function draw() {
+        
         $('<div/>', { id: 'pong-game' }).css(CSS.arena).appendTo('body');
         $('<div/>', { id: 'pong-line' }).css(CSS.line).appendTo('#pong-game');
         $('<div/>', { id: 'pong-ball' }).css(CSS.ball).appendTo('#pong-game');
+        $('<div/>', { id: 'pong-menu' }).css(CSS.menu).appendTo('#pong-game');
+        $('<button/>',{id : 'pvsp'}).css(CSS.button).appendTo('#pong-menu').html("PVSP").click(function(){
+           $(this).parent().hide();
+            CONSTS.mode = 'pvsp';
+            roll();
+            loop();
+            
+            
+        })
+        $('<button/>',{id : 'cvsp'}).css(CSS.button).appendTo('#pong-menu').html("CVSP").click(function(){
+            $(this).parent().hide();
+            CONSTS.mode = 'cvsp';
+            roll();
+            loop();
+        })
+        $('<button/>',{id : 'cvsc'}).css(CSS.button).appendTo('#pong-menu').html("CVSC").click(function(){
+            $(this).parent().hide();
+            CONSTS.mode = 'cvsc';
+            roll();
+            loop();
+        })
         $('<div/>', { id: 'stick-1' }).css($.extend(CSS.stick1, CSS.stick))
             .appendTo('#pong-game');
         $('<div/>', { id: 'stick-2' }).css($.extend(CSS.stick2, CSS.stick))
@@ -111,6 +147,7 @@
     }
 
     function setEvents() {
+        
         $(document).on('keydown', function (e) {
             switch (e.keyCode) {
                 //Stick1 
@@ -145,13 +182,24 @@
     }
 
     function loop() {
+        
         window.pongLoop = setInterval(function () {
+            if(CONSTS.mode == 'pvsp'){
+                CSS.stick1.top += CONSTS.stick1Speed;
+                CSS.stick2.top += CONSTS.stick2Speed;
+            }
+            else if(CONSTS.mode == 'cvsp'){
+                CSS.stick1.top += CONSTS.stick1Speed;
+                CSS.stick2.top += CONSTS.stick2Speed+CONSTS.ballTopSpeed;
+            }
+            else if(CONSTS.mode == 'cvsc'){
+                CSS.stick1.top += CONSTS.stick1Speed+CONSTS.ballTopSpeed;
+                CSS.stick2.top += CONSTS.stick2Speed+CONSTS.ballTopSpeed;
+            }
 
-            CSS.stick1.top += CONSTS.stick1Speed;
             CSS.stick1.top = stickControl(CSS.stick1.top)
             $('#stick-1').css('top', CSS.stick1.top);
 
-            CSS.stick2.top += CONSTS.stick2Speed;
             CSS.stick2.top = stickControl(CSS.stick2.top)
             $('#stick-2').css('top', CSS.stick2.top)
 
@@ -258,18 +306,20 @@
     }
 
     function playNewGame(){
-        if(window.confirm("tekrar oynamak ister misin.")){
+        if(window.confirm("Tekrar oynamak ister misin.")){
+           $('#pong-menu').show();
             CONSTS.score1 = 0;
             CONSTS.score2 = 0;
             CONSTS.ballCount = 8;
-            
-            roll();
-            loop();
+          
         }
     }
 
-    window.window.onbeforeunload = function () {
+    window.onbeforeunload = function () {
         saveScoreData();
     }
+
+   
+
     start();
 })();
