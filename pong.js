@@ -70,7 +70,7 @@
     };
 
     var CONSTS = {
-        gameSpeed: 10,
+        gameSpeed: 40,
         score1: 0,
         score2: 0,
         stick1Speed: 0,
@@ -103,7 +103,7 @@
         $('<div/>', { id: 'ballCount' }).css(CSS.ballCount)
             .appendTo('#pong-game');
 
-        if (localStorage.length != 0) {
+        if (localStorage.length >1) {
             getScoreData();
             setScoreData();
         }
@@ -136,6 +136,10 @@
                     saveScoreData();
                     clearInterval(window.pongLoop)
                     break;
+                case 32:
+
+                    break;
+
             }
         });
     }
